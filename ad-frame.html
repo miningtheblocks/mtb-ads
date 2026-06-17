@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- CRIT-22 v3 (2026-06-17): este archivo se sirve desde el subdominio
+       ads.miningtheblocks.com (origen separado del padre miningtheblocks.com).
+       El padre lo embebe con <iframe sandbox="... allow-same-origin">.
+       Al ser distinto origen, allow-same-origin NO le da acceso al DOM ni
+       al sessionStorage del padre (Same-Origin Policy del navegador): el
+       iframe es same-origin con SU dominio (ads.miningtheblocks.com),
+       no con el padre. Así el ad-network puede usar cookies/storage que
+       necesita para inicializar, pero queda imposibilitado de exfiltrar
+       el sid+token del padre. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; connect-src 'self' https:; frame-src https:; object-src 'none'; base-uri 'self'">
+  <meta name="referrer" content="no-referrer">
+  <title>ad</title>
+  <style>
+    html, body { margin: 0; padding: 0; background: transparent; }
+    body { min-height: 100vh; overflow: hidden; }
+  </style>
+</head>
+<body>
+<!-- Ad network script — corre dentro del iframe en origen separado.
+     Si esta red se reemplaza (TODO long-term: AdSense/Coinzilla), cambiar
+     este <script src=...> únicamente. -->
+<script src="https://pl29683393.effectivecpmnetwork.com/13/ce/c2/13cec2cd2d7b5f2302ef1e88a79a03f1.js"></script>
+</body>
+</html>
