@@ -11,19 +11,54 @@
        iframe es same-origin con SU dominio (ads.miningtheblocks.com),
        no con el padre. Así el ad-network puede usar cookies/storage que
        necesita para inicializar, pero queda imposibilitado de exfiltrar
-       el sid+token del padre. -->
+       el sid+token del padre.
+       Cambio 5 (compliance anuncios, 2026-07-03): además del iframe legacy,
+       ahora también se embebe vía WebView nativo desde la app (GetPeaks.js
+       y DynamicCube201.js), que es un proceso web aislado sin ningún
+       acceso al JS/estado de la app -- aislamiento equivalente o mayor al
+       del iframe. Parametrizado con ?type=social (Social Bar, pantalla de
+       picos, pasivo) o ?type=banner (Banner 300x250, carga inicial del
+       cubo, pasivo) -- ninguno de los dos tiene relación server-side con
+       ningún claim de picos. -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; connect-src 'self' https:; frame-src https:; object-src 'none'; base-uri 'self'">
   <meta name="referrer" content="no-referrer">
   <title>ad</title>
   <style>
     html, body { margin: 0; padding: 0; background: transparent; }
     body { min-height: 100vh; overflow: hidden; }
+    #social-slot, #banner-slot { display: none; }
+    #social-slot.active, #banner-slot.active { display: block; }
   </style>
 </head>
 <body>
-<!-- Ad network script — corre dentro del iframe en origen separado.
-     Si esta red se reemplaza (TODO long-term: AdSense/Coinzilla), cambiar
-     este <script src=...> únicamente. -->
+
+<!-- Social Bar — pantalla de picos (GetPeaks.js), zone 29582894. -->
+<div id="social-slot">
 <script src="https://pl29683393.effectivecpmnetwork.com/13/ce/c2/13cec2cd2d7b5f2302ef1e88a79a03f1.js"></script>
+</div>
+
+<!-- Banner 300x250 — carga inicial del cubo (DynamicCube201.js), zone 30079881. -->
+<div id="banner-slot">
+<script>
+  atOptions = {
+    'key' : '4f4ec845a59896c36582f819ef23305a',
+    'format' : 'iframe',
+    'height' : 250,
+    'width' : 300,
+    'params' : {}
+  };
+</script>
+<script src="https://www.highperformanceformat.com/4f4ec845a59896c36582f819ef23305a/invoke.js"></script>
+</div>
+
+<script>
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var type = params.get('type') === 'banner' ? 'banner' : 'social';
+    var el = document.getElementById(type === 'banner' ? 'banner-slot' : 'social-slot');
+    if (el) el.classList.add('active');
+  })();
+</script>
+
 </body>
 </html>
